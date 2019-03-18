@@ -1,0 +1,1 @@
+# s06_praktika

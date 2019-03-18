@@ -1,1 +1,1 @@
-# s06_praktika
+# Neues Semester, neues Repo

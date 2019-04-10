@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <string.h>
 
 void fprintPt(pthread_t pt) {
 
@@ -35,14 +36,27 @@ int main() {
   int i;
 
   for (i = 0; i < MAXTHREADS; ++i) {
-      pthread_create(&(threads[i]), NULL, threadHello, &i);
+      int ret = pthread_create(&(threads[i]), NULL, threadHello, &i);
+
+      if ( ret != 0 ){
+           printf ("pthread_create: %s\n", strerror(ret));
+           exit(-1);
+      }
+
       printf("Creating thread %d: ", i);
       fprintPt(threads[i]);
       printf(".\n");
   }
 
   for (i = 0; i < MAXTHREADS; ++i) {
-      pthread_join(threads[i], &rv);
+      int ret = pthread_join(threads[i], &rv);
+
+      if ( ret != 0 ){
+           printf ("pthread_create: %s\n", strerror(ret));
+           exit(-1);
+      }
+
+
       pthread_t tmp = (pthread_t) rv;
 
       printf("Joining thread %d: we called it ", i);

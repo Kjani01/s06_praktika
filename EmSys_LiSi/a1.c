@@ -3,10 +3,9 @@
 #include <unistd.h>
 #include <string.h>
 
+//print function for hex addresses (copied from stackoverflow)
 void fprintPt(pthread_t pt) {
-
 	size_t i;
-
     unsigned char *ptc = (unsigned char*)(void*)(&pt);
     printf("0x");
     for (i=0; i<sizeof(pt); i++) {
@@ -14,6 +13,7 @@ void fprintPt(pthread_t pt) {
     }
 }
 
+//function creates a new thread
 void * threadHello(void * vargp) {
     int st = *(int *)vargp;
     sleep(st);
@@ -35,9 +35,11 @@ int main() {
 
   int i;
 
+  //create threads for number maxthreads
   for (i = 0; i < MAXTHREADS; ++i) {
       int ret = pthread_create(&(threads[i]), NULL, threadHello, &i);
 
+      //error handling
       if ( ret != 0 ){
            printf ("pthread_create: %s\n", strerror(ret));
            exit(-1);
@@ -48,14 +50,15 @@ int main() {
       printf(".\n");
   }
 
+  //wait for thread to exit and compares addresses
   for (i = 0; i < MAXTHREADS; ++i) {
       int ret = pthread_join(threads[i], &rv);
 
+      //error handling
       if ( ret != 0 ){
            printf ("pthread_create: %s\n", strerror(ret));
            exit(-1);
       }
-
 
       pthread_t tmp = (pthread_t) rv;
 
@@ -65,6 +68,7 @@ int main() {
       fprintPt(tmp);
       printf(".\n");
 
+      //comparison of identities
       if (pthread_equal(tmp, threads[i])) {
           printf("Thread %d had the same ID.\n", i);
       }

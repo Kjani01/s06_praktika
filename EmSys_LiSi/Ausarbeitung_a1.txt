@@ -1,0 +1,4 @@
+Zur Realisierung der Aufgabe werden zwei Threads in einer for-Schleife mit Hilfe der Funktion "threadHello" erzeugt.
+In der Funktion "threadHello" wird der Thread schlafen gelegt und die Adresse über pthread_exit zurückgegeben.
+Mit einer zweiten for-Schleife werden die zurückgekehrten Threads mit pthread_join wieder zusammengeführt.
+Anschließend werden die Adressen verglichen, die bei Erzeugung und Rückkehr ausgegeben werden, ob es dieselben sind.

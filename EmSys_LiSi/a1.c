@@ -1,13 +1,6 @@
-#import <stdio.h>
-#import <pthread.h>
-#import <unistd.h>
-
-void * threadHello(void * vargp) {
-  int st = *(int *)vargp;
-  sleep(st);
-  printf("Hello from thread %d.\n", st);
-  pthread_exit(pthread_self);
-}
+#include <stdio.h>
+#include <pthread.h>
+#include <unistd.h>
 
 void fprintPt(pthread_t pt) {
     unsigned char *ptc = (unsigned char*)(void*)(&pt);
@@ -17,27 +10,40 @@ void fprintPt(pthread_t pt) {
     }
 }
 
+void * threadHello(void * vargp) {
+    int st = *(int *)vargp;
+    sleep(st);
+    printf("Hello from thread %d. My name is: ", st);
+    fprintPt(pthread_self);
+    printf("\n");
+    pthread_exit(pthread_self);
+}
+
 int main() {
   int MAXTHREADS = 2;
+    printf("MAIN THREAD: ");
+    fprintPt(pthread_self);
+    printf("\n");
   printf("Creating threads ...\n");
-  pthread_t t0;
   void *rv;
 
   pthread_t threads[MAXTHREADS];
 
   for (int i = 0; i < MAXTHREADS; ++i) {
+      pthread_create(&(threads[i]), NULL, threadHello, &i);
       printf("Creating thread %d: ", i);
       fprintPt(threads[i]);
       printf(".\n");
-      pthread_create(&(threads[i]), NULL, threadHello, &i);
   }
   
   for (int i = 0; i < MAXTHREADS; ++i) {
       pthread_join(threads[i], &rv);
-      pthread_t tmp = (pthread_t)rv;
+      pthread_t tmp = rv;
       
-      printf("Joining thread %d: ", i);
+      printf("Joining thread %d: we called it ", i);
       fprintPt(threads[i]);
+      printf(", it called itself ");
+      fprintPt(tmp);
       printf(".\n");
       
       if (pthread_equal(tmp, threads[i])) {

@@ -36,6 +36,11 @@ void main()
 		texel = texel + texture(textureMap, texCoords + offsets[3]) * -1;
 		texel = texel + texture(textureMap, texCoords + offsets[1]) * -1;
 		texel = texel + texture(textureMap, texCoords + offsets[7]) * -1;
+		
+	texel += -0.5;
+	texel = texel * ((param1[1] / 100) + 1);
+	texel += (param1[0] / 100) + 0.5;
+	texel[3] = 1.0; //alpha
 
 
 

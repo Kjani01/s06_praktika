@@ -31,6 +31,7 @@ void main()
 {
 
 		vec4 texel = texture(textureMap, texCoords);
+		float alpha = texel[3];
 		vec4 x;
 		vec4 y;
 
@@ -53,6 +54,11 @@ void main()
 		y = y * texel;
 
 		texel = sqrt(x * x + y * y);
+
+	texel += -0.5;
+	texel = texel * ((param1[1] / 100) +1);
+	texel += (param1[0] / 100) + 0.5;
+	texel[3] = alpha;
 
 		fragColor =	texel;
 

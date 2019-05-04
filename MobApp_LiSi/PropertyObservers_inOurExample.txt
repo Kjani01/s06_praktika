@@ -1,0 +1,6 @@
+In our example we see a variable called totalSteps. The willSet 
+and didSet methods are hooked with this variable, which you can see
+if you look closer at the curly bracked, right after the variable
+declaration. So these willSet and didSet work exlusively for this
+variable and willSet is called right before the varialbe is set 
+and didSet is called right after the variable is set.

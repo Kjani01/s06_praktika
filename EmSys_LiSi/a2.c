@@ -2,6 +2,8 @@
 #include <time.h>
 #include <sys/neutrino.h>
 
+//192.168.8.2
+
 /*int changeSystemTick(unsigned int microsecs) {
 	//int t = ticksize;
     printf("SYSTEM CLOCK GRANULARITY %d\n", ticksize);
@@ -10,7 +12,7 @@
     return 0;
 }*/
 
-void changeSystemTick(unsigned int microsecs)
+/*void changeSystemTick(unsigned int microsecs)
 {
 	struct _clockperiod clockRes;
 	struct _clockperiod clockRes_new;
@@ -42,58 +44,36 @@ void changeSystemTick(unsigned int microsecs)
 }
 
 
-int main2() {
-	
-	changesystemTick(5000);
+int main() {
+
+	changeSystemTick(5000);
 	return 0;
-	
-}
+
+}*/
 
 int main() {
-    //changeSystemTick(1);
-
     printf("Der 1ms-Sleep\n");
+
+    struct timespec starttime;
+    clock_gettime(CLOCK_REALTIME, &starttime);
 
     struct timespec current;
     struct timespec deadline;
     struct timespec aftertime;
 
     clock_gettime(CLOCK_REALTIME, &current);
-    long long currentN = timespec2nsec(&current);
-    long long deadlineN = timespec2nsec(&current);
+    clock_gettime(CLOCK_REALTIME, &deadline);
 
-    //printf("CurrentN: %lld", currentN);
-
-    //deadline = current;
-
-    deadline = current;
     deadline.tv_sec += 5;
 
-    long long i = 0;
-    /*for (i = 0; i < 10000; i++) {
-        //clock_gettime(CLOCK_MONOTONIC, &deadline);
-        deadline.tv_nsec += 100000;
-        clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &deadline, NULL);
-    }*/
+    unsigned long i = 0;
 
-    printf("       START TIME %lld.%.9ld\n", (long long)current.tv_sec, current.tv_nsec);
-    printf("PLANNED STOP TIME %lld.%.9ld\n", (long long)deadline.tv_sec, deadline.tv_nsec);
+    clock_gettime(CLOCK_REALTIME, &aftertime);
 
-    //double start = current.tv_sec; // + current.tv_nsec * 10^-9;
-    //printf("start: %f\n", start);
-    printf("deadlineN: %lld\n", deadlineN);
+    while (!(current.tv_sec >= deadline.tv_sec && current.tv_nsec >= deadline.tv_nsec)) {
 
-
-    while (deadlineN >= currentN) {
-    	//printf("While Schleife");
-        //clock_gettime(CLOCK_REALTIME, &current);
-        //currentN = timespec2nsec(&current);
-        //printf(" currentN: %lld\n", currentN);
-
-        //current.tv_nsec += 1000;
-		
 		//Wir müssen noch eine Sekunde drauf rechnen!
-        
+
 		long sec = aftertime.tv_sec;
 		long nsec = aftertime.tv_nsec + 1000000; // + 1 ms
 		// 10^(-9) nsec = 1 sec -> auf sec draufrechnen
@@ -103,26 +83,23 @@ int main() {
 		}
 		aftertime.tv_sec = sec;
 		aftertime.tv_nsec = nsec;
-		
-		int errorCode = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &current, NULL);
+
+		int errorCode = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &aftertime, NULL);
        // printf("       START TIME %lld.%.9ld\n", (long long)current.tv_sec, current.tv_nsec);
         if (errorCode != 0)
 		{
-			printf("Error in Nanosleep: %s\n", strerror(errorCode));
+			//printf("Error in Nanosleep: %s\n", strerror(errorCode));
 			continue;
 		}
-		
-		i++;
-		clock_gettime(CLOCK_REALTIME, &aftertime);
 
+		i++;
+		clock_gettime(CLOCK_REALTIME, &current);
     }
 
-    printf("Iterations: %lld\n", i);
+    printf("Iterations: %lu\n", i);
 
-    /*printf("       START TIME %lld.%.9ld\n", (long long)current.tv_sec, current.tv_nsec);
-    deadline = current;
-    deadline.tv_sec += 1;
-    printf("PLANNED STOP TIME %lld.%.9ld\n", (long long)deadline.tv_sec, deadline.tv_nsec);*/
+    printf("       START TIME %lld.%.9ld\n", (long long)starttime.tv_sec, starttime.tv_nsec);
+    printf("PLANNED STOP TIME %lld.%.9ld\n", (long long)deadline.tv_sec, deadline.tv_nsec);
     printf("   REAL STOP TIME %lld.%.9ld\n", (long long)aftertime.tv_sec, aftertime.tv_nsec);
 
     return 0;

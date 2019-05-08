@@ -33,7 +33,7 @@ static float rotation[] = { 0, 0, 0, 0 };
 bool bCull = false;
 bool bOutline = false;
 bool bDepth = true;
-bool bSwitch = false;
+bool bFrontback = false;
 
 
 //GUI
@@ -46,7 +46,7 @@ void InitGUI()
 	TwAddVarRW(bar, "Depth Test?", TW_TYPE_BOOLCPP, &bDepth, "");
 	TwAddVarRW(bar, "Culling?", TW_TYPE_BOOLCPP, &bCull, "");
 	TwAddVarRW(bar, "Backface Wireframe?", TW_TYPE_BOOLCPP, &bOutline, "");
-	TwAddVarRW(bar, "Switch Front/Backside", TW_TYPE_BOOLCPP, &bSwitch, "");
+	TwAddVarRW(bar, "Front<>Back", TW_TYPE_BOOLCPP, &bFrontback, "");
 	//Hier weitere GUI Variablen anlegen. Für Farbe z.B. den Typ TW_TYPE_COLOR4F benutzen
 }
 
@@ -69,7 +69,7 @@ void CreateGeometry()
 
 		// Alterniere die Farbe zwischen Rot und Gruen
 		if ((iPivot % 2) == 0)
-			konus.Color4f(0.235, 0.235, 0.235, 1);
+			konus.Color4f(0.635, 0.235, 0.235, 1);
 		else
 			konus.Color4f(0, 0.6, 1, 1);
 
@@ -88,7 +88,8 @@ void CreateGeometry()
 	boden.Begin(GL_TRIANGLE_FAN, 18);
 	// Das Zentrum des Triangle_Fans ist im Ursprung
 	boden.Vertex3f(0.0f, 0.0f, 0.0f);
-	for (float angle = 0.0f; angle < (2.0f*GL_PI); angle += (GL_PI / 8.0f))
+	//for (float angle = 0.0f; angle < (2.0f*GL_PI); angle += (GL_PI / 8.0f))
+	for (float angle = (2.0f*GL_PI); angle > 0.0f; angle -= (GL_PI / 8.0f))
 	{
 		// Berechne x und y Positionen des naechsten Vertex
 		float x = 50.0f*sin(angle);
@@ -136,10 +137,10 @@ void RenderScene(void)
 	else
 		glPolygonMode(GL_BACK, GL_FILL);
 
-	if (bSwitch)
-		glFrontFace(GL_BACK);
+	if (bFrontback)
+		glFrontFace(GL_CCW);
 	else
-		glFrontFace(GL_FRONT);
+		glFrontFace(GL_CW);
 
 	// Speichere den matrix state und führe die Rotation durch
 	modelViewMatrix.PushMatrix();

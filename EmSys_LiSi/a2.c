@@ -10,6 +10,45 @@
     return 0;
 }*/
 
+void changeSystemTick(unsigned int microsecs)
+{
+	struct _clockperiod clockRes;
+	struct _clockperiod clockRes_new;
+
+	int error;
+
+	//aktuelle zeit ausgeben
+	error = ClockPeriod(CLOCK_REALTIME, NULL, &clockRes, 0);
+	if (error != 0) {
+		perror("Error in ClockPeriod");
+	}
+	printf("Current Clock Resolution: %lu\n", clockRes.nsec);
+
+	// neue auflösung setzen in nsec
+	clockRes_new.nsec = microsecs * 1000;
+	clockRes_new.fract = 0;
+
+	error = ClockPeriod(CLOCK_REALTIME, &clockRes_new, NULL, 0);
+	if (error != 0) {
+		perror("Error in ClockPeriod");
+	}
+
+	//neue auflösung ausgeben
+	error = ClockPeriod(CLOCK_REALTIME, NULL, &clockRes, 0);
+	if (error != 0) {
+		perror("Error in ClockPeriod");
+	}
+	printf("New Clock Resolution: %lu\n", clockRes.nsec);
+}
+
+
+int main2() {
+	
+	changesystemTick(5000);
+	return 0;
+	
+}
+
 int main() {
     //changeSystemTick(1);
 
@@ -18,6 +57,7 @@ int main() {
     struct timespec current;
     struct timespec deadline;
     struct timespec aftertime;
+
     clock_gettime(CLOCK_REALTIME, &current);
     long long currentN = timespec2nsec(&current);
     long long deadlineN = timespec2nsec(&current);
@@ -27,7 +67,7 @@ int main() {
     //deadline = current;
 
     deadline = current;
-    deadline.tv_sec += 1;
+    deadline.tv_sec += 5;
 
     long long i = 0;
     /*for (i = 0; i < 10000; i++) {
@@ -46,19 +86,38 @@ int main() {
 
     while (deadlineN >= currentN) {
     	//printf("While Schleife");
-        clock_gettime(CLOCK_REALTIME, &current);
-        currentN = timespec2nsec(&current);
-        printf(" currentN: %lld\n", currentN);
+        //clock_gettime(CLOCK_REALTIME, &current);
+        //currentN = timespec2nsec(&current);
+        //printf(" currentN: %lld\n", currentN);
 
-        current.tv_nsec += 1000;
-        clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &current, NULL);
+        //current.tv_nsec += 1000;
+		
+		//Wir müssen noch eine Sekunde drauf rechnen!
+        
+		long sec = aftertime.tv_sec;
+		long nsec = aftertime.tv_nsec + 1000000; // + 1 ms
+		// 10^(-9) nsec = 1 sec -> auf sec draufrechnen
+		if (nsec >= 1000000000) {
+			sec += nsec / 1000000000;
+			nsec %= 1000000000;
+		}
+		aftertime.tv_sec = sec;
+		aftertime.tv_nsec = nsec;
+		
+		int errorCode = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &current, NULL);
        // printf("       START TIME %lld.%.9ld\n", (long long)current.tv_sec, current.tv_nsec);
-        i++;
+        if (errorCode != 0)
+		{
+			printf("Error in Nanosleep: %s\n", strerror(errorCode));
+			continue;
+		}
+		
+		i++;
+		clock_gettime(CLOCK_REALTIME, &aftertime);
 
     }
 
-    printf("i: %lld\n", i);
-    clock_gettime(CLOCK_REALTIME, &aftertime);
+    printf("Iterations: %lld\n", i);
 
     /*printf("       START TIME %lld.%.9ld\n", (long long)current.tv_sec, current.tv_nsec);
     deadline = current;

@@ -5,82 +5,77 @@
 #include <sched.h>
 
 void waste_msecstest() {
-	
-	struct timespec before;
-    struct timespec after;
-	
-	clock_gettime(CLOCK_REALTIME, &before);
-	
+
 	int i;
-	
-	for (i = 0; i < 100; i++) {
-		double calculate = (i/(i-1)*i)/13;
+	for (i = 0; i < 37750; i++) {
+		double calculate = i/13;
 	}
-	
-	clock_gettime(CLOCK_REALTIME, &after);
-	
-	long diff = after.tv_nsec - before.tv_nsec;
-	printf("Time difference: %ld", diff);
 }
 
 void waste_msecs(unsigned int msecs) {
-	
-			struct timespec before;
-			struct timespec after;
-	
-			clock_gettime(CLOCK_REALTIME, &before);
-	
+
 	int iterations = msecs;
 	int i;
-	
+
 	for (i = 0; i < iterations; i++) {
-		double calculate = (i/(i-1)*i)/13;
+		double calculate = i/13;
 	}
-	
-			clock_gettime(CLOCK_REALTIME, &after);
-	
-			long diff = after.tv_nsec - before.tv_nsec;
-			printf("Time difference: %ld", diff);
 }
 
-void * threadScheduling(void * vargp) {	
-    printf("Hello from thread %d. My name is: ", st);
-	
+void * threadScheduling(void * vargp) {
+    printf("Hello from thread.\n");
+
 	pthread_attr_t attrib;
 	struct sched_param param;
 	pthread_attr_init(&attrib);
 	pthread_attr_getschedparam(&attrib, &param);
-	printf("My Priority is %d. ", *param);
+	int i = param->sched_priority;
+	printf("My Priority is %d. \n", i);
 
-	param->sched_priority= 1;
+	//param->sched_priority= 1;
 	pthread_attr_setschedparam(&attrib, &param);
-    waste_msecs(100);
+    waste_msecs(37750);
 	pthread_exit((void *)pthread_self());
 }
 
-int main2() {
+/*int main() {
+	struct timespec before;
+	struct timespec after;
+
+	int i;
+	//for (i = 0; i < 10; i++) {
+		clock_gettime(CLOCK_REALTIME, &before);
 		waste_msecstest();
-}
+		clock_gettime(CLOCK_REALTIME, &after);
+		long diff = after.tv_nsec - before.tv_nsec;
+		printf("Time difference %ld\n", diff);
+	//}
+
+
+	return 0;
+}*/
 
 int main() {
 
-	
-	pthread_t threads[1];
 
-	pthread_attr_setinheritsched(&attr,PTHREAD_EXPLICIT_SCHED );
+	pthread_t threads[1];
+	pthread_attr_t attrib;
+
+	pthread_attr_setinheritsched(&attrib,PTHREAD_EXPLICIT_SCHED );
 	  int i;
 	  //create threads for number maxthreads
-	  for (i = 0; i < MAXTHREADS; ++i) {
+	  for (i = 0; i < 1; ++i) {
 		  int ret = pthread_create(&(threads[i]), NULL, threadScheduling, &i);
 		  //error handling
 		  if ( ret != 0 ){
 			   printf ("pthread_create: %s\n", strerror(ret));
 			   exit(-1);
 		  }
-		  fprintPt(threads[i]);
 	  }
-	  
-	  for (i = 0; i < MAXTHREADS; ++i) {
+
+	  void *rv;
+
+	  for (i = 0; i < 1; ++i) {
 		  int ret = pthread_join(threads[i], &rv);
 
 		  //error handling
@@ -89,6 +84,6 @@ int main() {
 			   exit(-1);
 		  }
 	  }
-		
+
 	return 0;
 }

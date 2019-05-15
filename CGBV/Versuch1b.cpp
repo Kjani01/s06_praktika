@@ -28,6 +28,9 @@ GLBatch quad3;
 GLBatch quad4;
 GLBatch quad5;
 GLBatch quad6;
+GLBatch boden;
+GLBatch boden2;
+GLBatch zylrand;
 
 
 // Definition der Kreiszahl 
@@ -202,12 +205,36 @@ void CreateGeometry()
 
 
 
-	/*// Erzeuge einen weiteren Triangle_Fan um den Boden zu bedecken
+	// Erzeuge einen weiteren Triangle_Fan um den Boden zu bedecken
 	M3DVector3f bodenVertices[18];
 	M3DVector4f bodenColors[18];
+	M3DVector3f randVertices[36];
 	// Das Zentrum des Triangle_Fans ist im Ursprung
-	m3dLoadVector3(bodenVertices[0], 0, 0, 0);
+	m3dLoadVector3(bodenVertices[0], 0, 0, -75.0);
 	m3dLoadVector4(bodenColors[0], 1, 0, 0, 1);
+	int i = 1;
+	for (float angle = 0.0f; angle < (2.0f*GL_PI); angle += (GL_PI / 8.0f))
+	{
+		// Berechne x und y Positionen des naechsten Vertex
+		float x = 50.0f*sin(angle);
+		float y = 50.0f*cos(angle);
+		// Alterniere die Farbe zwischen Rot und Gruen
+			m3dLoadVector4(bodenColors[i], 1, 0.8, 0.2, 1);
+		// Spezifiziere den naechsten Vertex des Triangle_Fans
+			m3dLoadVector3(bodenVertices[i], x, y, -75.0);
+			m3dLoadVector3(randVertices[2*i-1], x, y, -75.0);
+		i++;
+	}
+	boden.Begin(GL_TRIANGLE_FAN, 18);
+	boden.CopyVertexData3f(bodenVertices);
+	boden.CopyColorData4f(bodenColors);
+	boden.End();
+
+	M3DVector3f boden2Vertices[18];
+	M3DVector4f boden2Colors[18];
+	// Das Zentrum des Triangle_Fans ist im Ursprung
+	m3dLoadVector3(boden2Vertices[0], 0, 0, 75.0);
+	m3dLoadVector4(boden2Colors[0], 1, 0, 0, 1);
 	i = 1;
 	for (float angle = 0.0f; angle < (2.0f*GL_PI); angle += (GL_PI / 8.0f))
 	{
@@ -215,20 +242,46 @@ void CreateGeometry()
 		float x = 50.0f*sin(angle);
 		float y = 50.0f*cos(angle);
 		// Alterniere die Farbe zwischen Rot und Gruen
-		if ((iPivot % 2) == 0)
-			m3dLoadVector4(bodenColors[i], 1, 0.8, 0.2, 1);
-		else
-			m3dLoadVector4(bodenColors[i], 0, 0.8, 0, 1);
-		// Inkrementiere iPivot um die Farbe beim naechsten mal zu wechseln
-		iPivot++;
+		m3dLoadVector4(boden2Colors[i], 0.8, 0.2, 0.2, 1);
 		// Spezifiziere den naechsten Vertex des Triangle_Fans
-		m3dLoadVector3(bodenVertices[i], x, y, 0);
+		m3dLoadVector3(boden2Vertices[i], x, y, 75.0);
+		m3dLoadVector3(randVertices[2*i], x, y, 75.0);
 		i++;
 	}
-	boden.Begin(GL_TRIANGLE_FAN, 18);
-	boden.CopyVertexData3f(bodenVertices);
-	boden.CopyColorData4f(bodenColors);
-	boden.End();*/
+	boden2.Begin(GL_TRIANGLE_FAN, 18);
+	boden2.CopyVertexData3f(boden2Vertices);
+	boden2.CopyColorData4f(boden2Colors);
+	boden2.End();
+
+	M3DVector4f randColors[36];
+	for (int i = 0; i < 35; i++) {
+		m3dLoadVector4(randColors[i], 0.7, 0.5, 0.2, 1);
+	}
+
+	zylrand.Begin(GL_QUAD_STRIP, 36);
+	zylrand.CopyVertexData3f(randVertices);
+	zylrand.CopyColorData4f(randColors);
+	zylrand.End();
+}
+
+void DrawSquare() {
+	quad1.Draw();
+	quad2.Draw();
+	quad3.Draw();
+	quad4.Draw();
+	quad5.Draw();
+	quad6.Draw();
+}
+
+void DrawCylinder() {
+	//modelViewMatrix.PushMatrix();
+	boden.Draw();
+	//modelViewMatrix.Translate(0.0, 0.0, 20.0);
+
+	zylrand.Draw();
+
+	boden2.Draw();
+	//modelViewMatrix.PopMatrix();
 }
 
 // Aufruf draw scene
@@ -265,13 +318,8 @@ void RenderScene(void)
 	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
 	//Zeichne Konus
 	//konus.Draw();
-	//boden.Draw();
-	quad1.Draw();
-	quad2.Draw();
-	quad3.Draw();
-	quad4.Draw();
-	quad5.Draw();
-	quad6.Draw();
+	DrawCylinder();
+	//DrawSquare();
 	//Auf fehler überprüfen
 	gltCheckErrors(0);
 	// Hole die im Stack gespeicherten Transformationsmatrizen wieder zurück
@@ -310,7 +358,7 @@ void SpecialKeys(int key, int x, int y)
 
 void ChangeSize(int w, int h)
 {
-	GLfloat nRange = 200.0f;
+	GLfloat nRange = 300.0f;
 
 	// Verhindere eine Division durch Null
 	if (h == 0)

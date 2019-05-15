@@ -22,9 +22,12 @@ GLMatrixStack projectionMatrix;
 GLGeometryTransform transformPipeline;
 GLFrustum viewFrustum;
 
-GLBatch konus;
-GLBatch boden;
-GLBatch quad;
+GLBatch quad1;
+GLBatch quad2;
+GLBatch quad3;
+GLBatch quad4;
+GLBatch quad5;
+GLBatch quad6;
 
 
 // Definition der Kreiszahl 
@@ -49,7 +52,7 @@ void InitGUI()
 	TwAddVarRW(bar, "Depth Test?", TW_TYPE_BOOLCPP, &bDepth, "");
 	TwAddVarRW(bar, "Culling?", TW_TYPE_BOOLCPP, &bCull, "");
 	TwAddVarRW(bar, "Backface Wireframe?", TW_TYPE_BOOLCPP, &bOutline, "");
-	//Hier weitere GUI Variablen anlegen. Für Farbe z.B. den Typ TW_TYPE_COLOR4F benutzen
+	//Hier weitere GUI Variablen anlegen. FÃ¼r Farbe z.B. den Typ TW_TYPE_COLOR4F benutzen
 }
 
 void CreateGeometry()
@@ -65,35 +68,104 @@ void CreateGeometry()
 	glEnd();*/
 
 
-	M3DVector3f quadVertices[8];
-	M3DVector4f quadColors[8];
+	M3DVector3f quadVertices[4];
+	M3DVector4f quadColors[4];
 
-	// front
-	m3dLoadVector4(quadColors[0], 0.635, 0.235, 0.235, 1);
-	m3dLoadVector4(quadColors[1], 0.635, 0.235, 0.235, 1);
-	m3dLoadVector4(quadColors[2], 0.635, 0.235, 0.235, 1);
+	// red
 	m3dLoadVector4(quadColors[3], 0.635, 0.235, 0.235, 1);
+	m3dLoadVector4(quadColors[2], 0.635, 0.235, 0.235, 1);
+	m3dLoadVector4(quadColors[1], 0.635, 0.235, 0.235, 1);
+	m3dLoadVector4(quadColors[0], 0.635, 0.235, 0.235, 1);
 
-	m3dLoadVector3(quadVertices[0], -50, 50, 0);
-	m3dLoadVector3(quadVertices[1], 50, 50, 0);
-	m3dLoadVector3(quadVertices[2], -50, -50, 0);
-	m3dLoadVector3(quadVertices[3], 50, -50, 0);
+	m3dLoadVector3(quadVertices[0], 0, 100, 0);
+	m3dLoadVector3(quadVertices[1], 100, 100, 0);
+	m3dLoadVector3(quadVertices[2], 0, 0, 0);
+	m3dLoadVector3(quadVertices[3], 100, 0, 0);
 
-	// back
-	m3dLoadVector4(quadColors[4], 0.235, 0.635, 0.235, 1);
-	m3dLoadVector4(quadColors[5], 0.235, 0.635, 0.235, 1);
-	m3dLoadVector4(quadColors[6], 0.235, 0.635, 0.235, 1);
-	m3dLoadVector4(quadColors[7], 0.235, 0.635, 0.235, 1);
+	quad1.Begin(GL_TRIANGLE_STRIP, 4);
+	quad1.CopyVertexData3f(quadVertices);
+	quad1.CopyColorData4f(quadColors);
+	quad1.End();
 
-	m3dLoadVector3(quadVertices[4], -50, 50, 100);
-	m3dLoadVector3(quadVertices[5], 50, 50, 100);
-	m3dLoadVector3(quadVertices[6], -50, -50, 100);
-	m3dLoadVector3(quadVertices[7], 50, -50, 100);
+	// blue
+	m3dLoadVector4(quadColors[0], 0.235, 0.235, 0.635, 1);
+	m3dLoadVector4(quadColors[1], 0.235, 0.235, 0.635, 1);
+	m3dLoadVector4(quadColors[2], 0.235, 0.235, 0.635, 1);
+	m3dLoadVector4(quadColors[3], 0.235, 0.235, 0.635, 1);
 
-	quad.Begin(GL_TRIANGLE_STRIP, 8);
-	quad.CopyVertexData3f(quadVertices);
-	quad.CopyColorData4f(quadColors);
-	quad.End();
+	m3dLoadVector3(quadVertices[0], 0, 0, 0);
+	m3dLoadVector3(quadVertices[1], 0, 100, 0);
+	m3dLoadVector3(quadVertices[2], 0, 0, 100);
+	m3dLoadVector3(quadVertices[3], 0, 100, 100);
+
+	quad2.Begin(GL_TRIANGLE_STRIP, 4);
+	quad2.CopyVertexData3f(quadVertices);
+	quad2.CopyColorData4f(quadColors);
+	quad2.End();
+
+	// cyan
+	m3dLoadVector4(quadColors[3], 0.235, 0.635, 0.635, 1);
+	m3dLoadVector4(quadColors[2], 0.235, 0.635, 0.635, 1);
+	m3dLoadVector4(quadColors[1], 0.235, 0.635, 0.635, 1);
+	m3dLoadVector4(quadColors[0], 0.235, 0.635, 0.635, 1);
+
+	m3dLoadVector3(quadVertices[0], 100, 0, 0);
+	m3dLoadVector3(quadVertices[1], 100, 100, 0);
+	m3dLoadVector3(quadVertices[2], 100, 0, 100);
+	m3dLoadVector3(quadVertices[3], 100, 100, 100);
+
+	quad4.Begin(GL_TRIANGLE_STRIP, 4);
+	quad4.CopyVertexData3f(quadVertices);
+	quad4.CopyColorData4f(quadColors);
+	quad4.End();
+
+	// green
+	m3dLoadVector4(quadColors[0], 0.235, 0.635, 0.235, 1);
+	m3dLoadVector4(quadColors[1], 0.235, 0.635, 0.235, 1);
+	m3dLoadVector4(quadColors[2], 0.235, 0.635, 0.235, 1);
+	m3dLoadVector4(quadColors[3], 0.235, 0.635, 0.235, 1);
+
+	m3dLoadVector3(quadVertices[0], 0, 100, 100);
+	m3dLoadVector3(quadVertices[1], 100, 100, 100);
+	m3dLoadVector3(quadVertices[2], 0, 0, 100);
+	m3dLoadVector3(quadVertices[3], 100, 0, 100);
+
+	quad3.Begin(GL_TRIANGLE_STRIP, 4);
+	quad3.CopyVertexData3f(quadVertices);
+	quad3.CopyColorData4f(quadColors);
+	quad3.End();
+
+	// yellow
+	m3dLoadVector4(quadColors[0], 0.635, 0.635, 0.235, 1);
+	m3dLoadVector4(quadColors[1], 0.635, 0.635, 0.235, 1);
+	m3dLoadVector4(quadColors[2], 0.635, 0.635, 0.235, 1);
+	m3dLoadVector4(quadColors[3], 0.635, 0.635, 0.235, 1);
+
+	m3dLoadVector3(quadVertices[0], 0, 100, 0);
+	m3dLoadVector3(quadVertices[1], 100, 100, 0);
+	m3dLoadVector3(quadVertices[2], 0, 100, 100);
+	m3dLoadVector3(quadVertices[3], 100, 100, 100);
+
+	quad5.Begin(GL_TRIANGLE_STRIP, 4);
+	quad5.CopyVertexData3f(quadVertices);
+	quad5.CopyColorData4f(quadColors);
+	quad5.End();
+
+	// magenta
+	m3dLoadVector4(quadColors[0], 0.635, 0.235, 0.635, 1);
+	m3dLoadVector4(quadColors[1], 0.635, 0.235, 0.635, 1);
+	m3dLoadVector4(quadColors[2], 0.635, 0.235, 0.635, 1);
+	m3dLoadVector4(quadColors[3], 0.635, 0.235, 0.635, 1);
+
+	m3dLoadVector3(quadVertices[0], 0, 0, 0);
+	m3dLoadVector3(quadVertices[1], 100, 0, 0);
+	m3dLoadVector3(quadVertices[2], 0, 0, 100);
+	m3dLoadVector3(quadVertices[3], 100, 0, 100);
+
+	quad6.Begin(GL_TRIANGLE_STRIP, 4);
+	quad6.CopyVertexData3f(quadVertices);
+	quad6.CopyColorData4f(quadColors);
+	quad6.End();
 
 
 	//18 Vertices anlegen
@@ -112,21 +184,17 @@ void CreateGeometry()
 		// Berechne x und y Positionen des naechsten Vertex
 		float x = 50.0f*sin(angle);
 		float y = 50.0f*cos(angle);
-
 		// Alterniere die Farbe zwischen Rot und Gruen
 		if ((iPivot % 2) == 0)
 			m3dLoadVector4(konusColors[i], 0.635, 0.235, 0.235, 1);
 		else
 			m3dLoadVector4(konusColors[i], 0, 0.6, 1, 1);
-
 		// Inkrementiere iPivot um die Farbe beim naechsten mal zu wechseln
 		iPivot++;
-
 		// Spezifiziere den naechsten Vertex des Triangle_Fans
 		m3dLoadVector3(konusVertices[i], x, y, 0);
 		i++;
 	}
-
 	konus.Begin(GL_TRIANGLE_FAN, 18);
 	konus.CopyVertexData3f(konusVertices);
 	konus.CopyColorData4f(konusColors);
@@ -146,21 +214,17 @@ void CreateGeometry()
 		// Berechne x und y Positionen des naechsten Vertex
 		float x = 50.0f*sin(angle);
 		float y = 50.0f*cos(angle);
-
 		// Alterniere die Farbe zwischen Rot und Gruen
 		if ((iPivot % 2) == 0)
 			m3dLoadVector4(bodenColors[i], 1, 0.8, 0.2, 1);
 		else
 			m3dLoadVector4(bodenColors[i], 0, 0.8, 0, 1);
-
 		// Inkrementiere iPivot um die Farbe beim naechsten mal zu wechseln
 		iPivot++;
-
 		// Spezifiziere den naechsten Vertex des Triangle_Fans
 		m3dLoadVector3(bodenVertices[i], x, y, 0);
 		i++;
 	}
-
 	boden.Begin(GL_TRIANGLE_FAN, 18);
 	boden.CopyVertexData3f(bodenVertices);
 	boden.CopyColorData4f(bodenColors);
@@ -170,7 +234,7 @@ void CreateGeometry()
 // Aufruf draw scene
 void RenderScene(void)
 {
-	// Clearbefehle für den color buffer und den depth buffer
+	// Clearbefehle fÃ¼r den color buffer und den depth buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Schalte culling ein falls das Flag gesetzt ist
@@ -185,27 +249,32 @@ void RenderScene(void)
 	else
 		glDisable(GL_DEPTH_TEST);
 
-	// Zeichne die Rückseite von Polygonen als Drahtgitter falls das Flag gesetzt ist
+	// Zeichne die RÃ¼ckseite von Polygonen als Drahtgitter falls das Flag gesetzt ist
 	if (bOutline)
 		glPolygonMode(GL_BACK, GL_LINE);
 	else
 		glPolygonMode(GL_BACK, GL_FILL);
 
-	// Speichere den matrix state und führe die Rotation durch
+	// Speichere den matrix state und fÃ¼hre die Rotation durch
 	modelViewMatrix.PushMatrix();
 	M3DMatrix44f rot;
 	m3dQuatToRotationMatrix(rot, rotation);
 	modelViewMatrix.MultMatrix(rot);
-
-	//setze den Shader für das Rendern
+	//modelViewMatrix.Translate(0.0, 0.0, -200.0);
+	//setze den Shader fÃ¼r das Rendern
 	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
 	//Zeichne Konus
 	//konus.Draw();
 	//boden.Draw();
-	quad.Draw();
-	//Auf fehler überprüfen
+	quad1.Draw();
+	quad2.Draw();
+	quad3.Draw();
+	quad4.Draw();
+	quad5.Draw();
+	quad6.Draw();
+	//Auf fehler Ã¼berprÃ¼fen
 	gltCheckErrors(0);
-	// Hole die im Stack gespeicherten Transformationsmatrizen wieder zurück
+	// Hole die im Stack gespeicherten Transformationsmatrizen wieder zurÃ¼ck
 	modelViewMatrix.PopMatrix();
 
 	TwDraw();
@@ -220,7 +289,7 @@ void SetupRC()
 	// Schwarzer Hintergrund
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	// In Uhrzeigerrichtung zeigende Polygone sind die Vorderseiten.
-	// Dies ist umgekehrt als bei der Default-Einstellung weil wir Triangle_Fans benützen
+	// Dies ist umgekehrt als bei der Default-Einstellung weil wir Triangle_Fans benÃ¼tzen
 	glFrontFace(GL_CW);
 
 	//initialisiert die standard shader
@@ -241,7 +310,7 @@ void SpecialKeys(int key, int x, int y)
 
 void ChangeSize(int w, int h)
 {
-	GLfloat nRange = 100.0f;
+	GLfloat nRange = 200.0f;
 
 	// Verhindere eine Division durch Null
 	if (h == 0)
@@ -253,8 +322,10 @@ void ChangeSize(int w, int h)
 
 	// Definiere das viewing volume (left, right, bottom, top, near, far)
 	if (w <= h)
+		//viewFrustum.SetOrthographic(-nRange, nRange, -nRange * float(h) / float(w), nRange * float(h) / float(w), nRange, 5*nRange);
 		viewFrustum.SetOrthographic(-nRange, nRange, -nRange * float(h) / float(w), nRange * float(h) / float(w), -nRange, nRange);
 	else
+		//viewFrustum.SetOrthographic(-nRange * float(w) / float(h), nRange * float(w) / float(h), -nRange, nRange, nRange, 5 * nRange);
 		viewFrustum.SetOrthographic(-nRange * float(w) / float(h), nRange * float(w) / float(h), -nRange, nRange, -nRange, nRange);
 	projectionMatrix.LoadMatrix(viewFrustum.GetProjectionMatrix());
 	// Ruecksetzung des Model view matrix stack
@@ -265,7 +336,7 @@ void ChangeSize(int w, int h)
 
 void ShutDownRC()
 {
-	//GUI aufräumen
+	//GUI aufrÃ¤umen
 	TwTerminate();
 }
 

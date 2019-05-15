@@ -23,18 +23,44 @@ void waste_msecs(unsigned int msecs) {
 }
 
 void * threadScheduling(void * vargp) {
-    printf("Hello from thread.\n");
+    printf("Hello from thread %d\n", pthread_self());
 
 	pthread_attr_t attrib;
 	struct sched_param param;
 	pthread_attr_init(&attrib);
-	pthread_attr_getschedparam(&attrib, &param);
-	int i = param->sched_priority;
-	printf("My Priority is %d. \n", i);
+	//int ret = pthread_attr_getschedparam(&attrib, &param);
+	int policy;
+	policy = SCHED_RR;
 
-	//param->sched_priority= 1;
-	pthread_attr_setschedparam(&attrib, &param);
+	int ret = pthread_getschedparam(pthread_self(), &policy, &param);
+	if ( ret != 0 ){
+					   printf ("pthread_getschedparam: %s\n", strerror(ret));
+					   exit(-1);
+				  }
+	//int i = param->sched_priority;
+	printf("My Priority is %d. \n", param.sched_priority);
+
+	/*param.sched_priority= 100;
+	ret = pthread_attr_setschedparam(&attrib, &param);
+	 if ( ret != 0 ){
+				   printf ("pthread_attr_setschedparam: %s\n", strerror(ret));
+				   exit(-1);
+			  }*/
+
+	ret = pthread_setschedprio(pthread_self(), 255);
+	if ( ret != 0 ){
+						   printf ("pthread_setschedprio: %s\n", strerror(ret));
+						   exit(-1);
+					  }
+
     waste_msecs(1);
+
+	ret = pthread_getschedparam(pthread_self(), &policy, &param);
+	if ( ret != 0 ){
+					   printf ("pthread_getschedparam: %s\n", strerror(ret));
+					   exit(-1);
+				  }
+	printf("My Priority is now %d. \n", param.sched_priority);
 	pthread_exit((void *)pthread_self());
 }
 

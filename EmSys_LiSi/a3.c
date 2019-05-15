@@ -14,7 +14,7 @@ void waste_msecstest() {
 
 void waste_msecs(unsigned int msecs) {
 
-	int iterations = msecs;
+	int iterations = msecs * 37750;
 	int i;
 
 	for (i = 0; i < iterations; i++) {
@@ -34,7 +34,7 @@ void * threadScheduling(void * vargp) {
 
 	//param->sched_priority= 1;
 	pthread_attr_setschedparam(&attrib, &param);
-    waste_msecs(37750);
+    waste_msecs(1);
 	pthread_exit((void *)pthread_self());
 }
 

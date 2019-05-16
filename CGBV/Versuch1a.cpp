@@ -1,4 +1,4 @@
-// Versuch1a.cpp
+ï»¿// Versuch1a.cpp
 // Ausgangssoftware des 1. Praktikumsversuchs 
 // zur Vorlesung Echtzeit-3D-Computergrahpik
 // von Prof. Dr. Alfred Nischwitz
@@ -35,6 +35,30 @@ bool bOutline = false;
 bool bDepth = true;
 bool bFrontback = false;
 
+//TESSELATION
+unsigned int tesselation = 1;
+
+//Set Funktion fï¿½r GUI, wird aufgerufen wenn Variable im GUI geï¿½ndert wird
+void TW_CALL SetTesselation(const void *value, void *clientData)
+{
+	//Pointer auf gesetzten Typ casten (der Typ der bei TwAddVarCB angegeben wurde)
+	const unsigned int* uintptr = static_cast<const unsigned int*>(value);
+
+	//Setzen der Variable auf neuen Wert
+	tesselation = *uintptr;
+
+	//Hier kann nun der Aufruf gemacht werden um die Geometrie mit neuem Tesselationsfaktor zu erzeugen
+}
+
+//Get Funktion fï¿½r GUI, damit GUI Variablen Wert zum anzeigen erhï¿½lt
+void TW_CALL GetTesselation(void *value, void *clientData)
+{
+	//Pointer auf gesetzten Typ casten (der Typ der bei TwAddVarCB angegeben wurde)
+	unsigned int* uintptr = static_cast<unsigned int*>(value);
+
+	//Variablen Wert and GUI weiterreichen
+	*uintptr = tesselation;
+}
 
 //GUI
 TwBar *bar;
@@ -47,7 +71,9 @@ void InitGUI()
 	TwAddVarRW(bar, "Culling?", TW_TYPE_BOOLCPP, &bCull, "");
 	TwAddVarRW(bar, "Backface Wireframe?", TW_TYPE_BOOLCPP, &bOutline, "");
 	TwAddVarRW(bar, "Front<>Back", TW_TYPE_BOOLCPP, &bFrontback, "");
-	//Hier weitere GUI Variablen anlegen. Für Farbe z.B. den Typ TW_TYPE_COLOR4F benutzen
+	//Hier weitere GUI Variablen anlegen. FÃ¼r Farbe z.B. den Typ TW_TYPE_COLOR4F benutzen
+	//Tesselation Faktor als unsigned 32 bit integer definiert
+	TwAddVarCB(bar, "Tesselation", TW_TYPE_UINT32, SetTesselation, GetTesselation, NULL, "");
 }
 
 void CreateGeometry()
@@ -116,7 +142,7 @@ void CreateGeometry()
 // Aufruf draw scene
 void RenderScene(void)
 {
-	// Clearbefehle für den color buffer und den depth buffer
+	// Clearbefehle fÃ¼r den color buffer und den depth buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Schalte culling ein falls das Flag gesetzt ist
@@ -131,7 +157,7 @@ void RenderScene(void)
 	else
 		glDisable(GL_DEPTH_TEST);
 
-	// Zeichne die Rückseite von Polygonen als Drahtgitter falls das Flag gesetzt ist
+	// Zeichne die RÃ¼ckseite von Polygonen als Drahtgitter falls das Flag gesetzt ist
 	if (bOutline)
 		glPolygonMode(GL_BACK, GL_LINE);
 	else
@@ -142,20 +168,20 @@ void RenderScene(void)
 	else
 		glFrontFace(GL_CW);
 
-	// Speichere den matrix state und führe die Rotation durch
+	// Speichere den matrix state und fÃ¼hre die Rotation durch
 	modelViewMatrix.PushMatrix();
 	M3DMatrix44f rot;
 	m3dQuatToRotationMatrix(rot, rotation);
 	modelViewMatrix.MultMatrix(rot);
 
-	//setze den Shader für das Rendern und übergebe die Model-View-Projection Matrix
+	//setze den Shader fÃ¼r das Rendern und Ã¼bergebe die Model-View-Projection Matrix
 	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
 	//Zeichne Konus und Boden
 	konus.Draw();
 	boden.Draw();
-	//Auf fehler überprüfen
+	//Auf fehler Ã¼berprÃ¼fen
 	gltCheckErrors(0);
-	// Hole die im Stack gespeicherten Transformationsmatrizen wieder zurück
+	// Hole die im Stack gespeicherten Transformationsmatrizen wieder zurÃ¼ck
 	modelViewMatrix.PopMatrix();
 
 	TwDraw();
@@ -170,12 +196,12 @@ void SetupRC()
 	// Schwarzer Hintergrund
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	// In Uhrzeigerrichtung zeigende Polygone sind die Vorderseiten.
-	// Dies ist umgekehrt als bei der Default-Einstellung weil wir Triangle_Fans benützen
+	// Dies ist umgekehrt als bei der Default-Einstellung weil wir Triangle_Fans benÃ¼tzen
 	glFrontFace(GL_CW);
 
 	//initialisiert die standard shader
 	shaderManager.InitializeStockShaders();
-	//Matrix stacks für die Transformationspipeline setzen, damit werden dann automatisch die Matrizen multipliziert
+	//Matrix stacks fÃ¼r die Transformationspipeline setzen, damit werden dann automatisch die Matrizen multipliziert
 	transformPipeline.SetMatrixStacks(modelViewMatrix, projectionMatrix);
 	//erzeuge die geometrie
 	CreateGeometry();
@@ -216,7 +242,7 @@ void ChangeSize(int w, int h)
 
 void ShutDownRC()
 {
-	//GUI aufräumen
+	//GUI aufrÃ¤umen
 	TwTerminate();
 }
 

@@ -290,6 +290,7 @@ void CreateGeometry()
 
 	m3dLoadVector3(bodenVertices[vertSizeCyl - 1], bodenVertices[1][0], bodenVertices[1][1], bodenVertices[1][2]);
 
+	boden.~GLBatch();
 	boden = GLBatch();
 	boden.Begin(GL_TRIANGLE_FAN, vertSizeCyl);
 	boden.CopyVertexData3f(bodenVertices);
@@ -325,6 +326,7 @@ void CreateGeometry()
 		printf("Schleife i: %d, Wert x: %f, Wert y: %f, Wert z: %f\n", i, bodenVertices[i][0], bodenVertices[i][1], bodenVertices[i][2]);
 	}
 
+	boden2.~GLBatch();
 	boden2 = GLBatch();
 	boden2.Begin(GL_TRIANGLE_FAN, vertSizeCyl);
 	boden2.CopyVertexData3f(boden2Vertices);
@@ -336,6 +338,7 @@ void CreateGeometry()
 		m3dLoadVector4(randColors[i], 0.7, 0.5, 0.2, 1);
 	}
 
+	zylrand.~GLBatch();
 	zylrand = GLBatch();
 	zylrand.Begin(GL_QUAD_STRIP, vertSizeRand);
 	zylrand.CopyVertexData3f(randVertices);

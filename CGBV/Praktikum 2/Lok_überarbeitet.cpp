@@ -429,7 +429,7 @@ void CreateGeometry()
 
 	auto sphericalVertices = new M3DVector3f[arr];
 	auto sphericalColors = new M3DVector4f[arr];
-	float sphericalMax = 100;
+	float sphericalDepth = 100;					//z-Wert???
 
 	//Laufvariable über alle Elemente der Kugel
 	i = 0;
@@ -447,10 +447,10 @@ void CreateGeometry()
 		xSecond = currRadius * sin((GL_PI / (8.0f * tesselation)) * (k + 1));
 		ySecond = currRadius * cos((GL_PI / (8.0f * tesselation)) * (k + 1));
 
-		m3dLoadVector3(sphericalVertices[i], 0, 0, sphericalMax);
-		m3dLoadVector3(sphericalVertices[i + 1], xFirst, yFirst, (sphericalMax - currentheight));
-		m3dLoadVector3(sphericalVertices[i + 2], 0, 0, sphericalMax);
-		m3dLoadVector3(sphericalVertices[i + 3], xSecond, ySecond, (sphericalMax - currentheight));
+		m3dLoadVector3(sphericalVertices[i], 0, 0, sphericalDepth);
+		m3dLoadVector3(sphericalVertices[i + 1], xFirst, yFirst, (sphericalDepth - currentheight));
+		m3dLoadVector3(sphericalVertices[i + 2], 0, 0, sphericalDepth);
+		m3dLoadVector3(sphericalVertices[i + 3], xSecond, ySecond, (sphericalDepth - currentheight));
 
 		//Farben setzen
 		if ((k % 2) == 0) {
@@ -485,8 +485,8 @@ void CreateGeometry()
 			float x1New = secRadius * sin((GL_PI / (8.0f * tesselation)) * (k + 1));
 			float y1New = secRadius * cos((GL_PI / (8.0f * tesselation)) * (k + 1));
 
-			float secHeightFirst = (sphericalMax - (fixedHeight * l));
-			float secHeightSecond = (sphericalMax - (fixedHeight * (l + 1)));
+			float secHeightFirst = (sphericalDepth - (fixedHeight * l));
+			float secHeightSecond = (sphericalDepth - (fixedHeight * (l + 1)));
 
 			m3dLoadVector3(sphericalVertices[i], xFirst, yFirst, secHeightFirst); //fixedHeight * l
 			m3dLoadVector3(sphericalVertices[i + 1], xNew, yNew, secHeightSecond); //fixedHeight * (l + 1)

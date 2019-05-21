@@ -35,31 +35,6 @@ bool bOutline = false;
 bool bDepth = true;
 bool bFrontback = false;
 
-//TESSELATION
-unsigned int tesselation = 1;
-
-//Set Funktion f�r GUI, wird aufgerufen wenn Variable im GUI ge�ndert wird
-void TW_CALL SetTesselation(const void *value, void *clientData)
-{
-	//Pointer auf gesetzten Typ casten (der Typ der bei TwAddVarCB angegeben wurde)
-	const unsigned int* uintptr = static_cast<const unsigned int*>(value);
-
-	//Setzen der Variable auf neuen Wert
-	tesselation = *uintptr;
-
-	//Hier kann nun der Aufruf gemacht werden um die Geometrie mit neuem Tesselationsfaktor zu erzeugen
-}
-
-//Get Funktion f�r GUI, damit GUI Variablen Wert zum anzeigen erh�lt
-void TW_CALL GetTesselation(void *value, void *clientData)
-{
-	//Pointer auf gesetzten Typ casten (der Typ der bei TwAddVarCB angegeben wurde)
-	unsigned int* uintptr = static_cast<unsigned int*>(value);
-
-	//Variablen Wert and GUI weiterreichen
-	*uintptr = tesselation;
-}
-
 //GUI
 TwBar *bar;
 void InitGUI()
@@ -72,8 +47,6 @@ void InitGUI()
 	TwAddVarRW(bar, "Backface Wireframe?", TW_TYPE_BOOLCPP, &bOutline, "");
 	TwAddVarRW(bar, "Front<>Back", TW_TYPE_BOOLCPP, &bFrontback, "");
 	//Hier weitere GUI Variablen anlegen. Für Farbe z.B. den Typ TW_TYPE_COLOR4F benutzen
-	//Tesselation Faktor als unsigned 32 bit integer definiert
-	TwAddVarCB(bar, "Tesselation", TW_TYPE_UINT32, SetTesselation, GetTesselation, NULL, "");
 }
 
 void CreateGeometry()

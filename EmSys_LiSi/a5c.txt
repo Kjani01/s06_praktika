@@ -1,0 +1,56 @@
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdio.h>
+
+
+int main {
+
+	char input = 'a';
+	int led1 = 0;
+	int led2 = 0;
+	int led3 = 0;
+	int led4 = 0;
+	
+	string path = "/dev/leds";
+	fh = open(*path, O_WRONLY);
+	
+	if ( fh == -1 ){
+	   printf ("pthread_getschedparam: %s\n", strerror(ret));
+	   exit(-1);
+	}
+	
+	while (input != 'q') {	
+	
+	
+		
+		if (input = '1') {
+			/*if (led1 = 0) {
+				led1 = 1;
+			}
+			else {
+				led1 = 0;
+			}*/
+			led1 = (led1 + 1) % 2;	
+		}
+		else if (input = '2') {
+			led2 = (led2 + 1) % 2;
+		}
+		
+		led3 = (led1 + led2) %2;
+		led4 = min((led1 + led2), 1); 
+		
+		printf ("Current Byte: %d%d%d%d 0000\n", led1, led2, led3, led4);
+
+		
+		input = getc(stdin);
+	}
+	
+	close(fh);
+	
+	
+	
+
+	return 0;
+}

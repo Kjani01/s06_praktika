@@ -52,6 +52,7 @@ unsigned int tesselation = 1;
 float scsize = 1;
 
 void CreateGeometry();
+void timer(int);
 void RenderScene(void);
 
 //Set Funktion fuer GUI, wird aufgerufen wenn Variable im GUI geaendert wird
@@ -351,68 +352,54 @@ void CreateGeometry()
 	//zeichnet nur einen Ring
 	/*auto circleVertices = new M3DVector3f[18];
 	auto circleColorsVertices = new M3DVector4f[18];
-
 	i = 0;
 	for (float angle = 0.0f; angle < (2.0f*GL_PI); angle += (GL_PI / (4.0f)))
 	{
 		// Berechne x und y Positionen des naechsten Vertex
 		float x = 50.0f*sin(angle);
 		float y = 50.0f*cos(angle);
-
 		// Spezifiziere den naechsten Vertex des Triangle_Fans
 		m3dLoadVector3(circleVertices[i], x, y, -75.0);
 		m3dLoadVector3(circleVertices[i + 1], x, y, -50.0);
 		m3dLoadVector4(circleColorsVertices[i], 0.7, 0.5, 0.2 * i, 1);
 		m3dLoadVector4(circleColorsVertices[i + 1], 0.2 * i, 0.5, 0.2, 1);
-
 		//printf("Schleife i: %d, Wert x: %f, Wert y: %f\n\n", i, x, y);
 		//printf("Schleife i + 1: %d, Wert x: %f, Wert y: %f\n\n", i + 1, x, y);
 		i += 2;
 	}
-
 	m3dLoadVector3(circleVertices[16], circleVertices[0][0], circleVertices[0][1], circleVertices[0][2]);
 	m3dLoadVector3(circleVertices[17], circleVertices[1][0], circleVertices[1][1], circleVertices[1][2]);
 	m3dLoadVector4(circleColorsVertices[16], 0.2, 0.5, 0.2, 1);
 	m3dLoadVector4(circleColorsVertices[17], 0.7, 0.5, 0.2, 1);
-
 	for (int i = 0; i < 18; i++) {
 		printf("Schleife i : %d, Wert x: %f, Wert y: %f, Wert z: %f\n", i, circleVertices[i][0], circleVertices[i][1], circleVertices[i][2]);
 		printf("Farbe i: %d, Wert x %f\n", i, circleColorsVertices[i][1]);
 	}
-
-
-
 	circleSlice.Begin(GL_QUAD_STRIP, 18);
 	circleSlice.CopyVertexData3f(circleVertices);
 	circleSlice.CopyColorData4f(circleColorsVertices);
 	circleSlice.End();
-
 	auto circle2Vertices = new M3DVector3f[18];
 	auto circle2ColorsVertices = new M3DVector4f[18];
-
 	i = 0;
 	for (float angle = 0.0f; angle < (2.0f*GL_PI); angle += (GL_PI / (4.0f)))
 	{
 		// Berechne x und y Positionen des naechsten Vertex
 		float x = 40.0f*sin(angle);
 		float y = 40.0f*cos(angle);
-
 		// Spezifiziere den naechsten Vertex des Triangle_Fans
 		m3dLoadVector3(circle2Vertices[i], x, y, -40.0);
 		m3dLoadVector3(circle2Vertices[i + 1], x, y, -20.0);
 		m3dLoadVector4(circle2ColorsVertices[i], 0.3, 0.2, 0.5 * i, 1);
 		m3dLoadVector4(circle2ColorsVertices[i + 1], 0.7 * i, 0.7, 0.3, 1);
-
 		printf("Schleife i: %d, Wert x: %f, Wert y: %f\n\n", i, x, y);
 		printf("Schleife i + 1: %d, Wert x: %f, Wert y: %f\n\n", i + 1, x, y);
 		i += 2;
 	}
-
 	m3dLoadVector3(circle2Vertices[16], circle2Vertices[0][0], circle2Vertices[0][1], circle2Vertices[0][2]);
 	m3dLoadVector3(circle2Vertices[17], circle2Vertices[1][0], circle2Vertices[1][1], circle2Vertices[1][2]);
 	m3dLoadVector4(circle2ColorsVertices[16], 0.2, 0.5, 0.2, 1);
 	m3dLoadVector4(circle2ColorsVertices[17], 0.7, 0.5, 0.2, 1);
-
 	circleSlice2.Begin(GL_QUAD_STRIP, 18);
 	circleSlice2.CopyVertexData3f(circleVertices);
 	circleSlice2.CopyColorData4f(circleColorsVertices);
@@ -429,13 +416,13 @@ void CreateGeometry()
 
 	auto sphericalVertices = new M3DVector3f[arr];
 	auto sphericalColors = new M3DVector4f[arr];
-	float sphericalDepth = 100;					
+	float sphericalDepth = 100;
 
 	//Laufvariable ueber alle Elemente der Kugel
 	i = 0;
 	float currRadius = 0;
 	float xFirst = 0;
-	float yFirst= 0;
+	float yFirst = 0;
 	float xSecond = 0;
 	float ySecond = 0;
 
@@ -567,9 +554,131 @@ void DrawSphere() {
 	sphere.Draw();
 }
 
+void DrawWheels() {
+	static float rotWh = 0.0f;
+	rotWh += 1.0f;
+
+	//erstes Set Raeder
+	//modelViewMatrix.PushMatrix();
+	modelViewMatrix.Scale(0.5, 0.5, 0.1);
+	modelViewMatrix.Translate(40, -50, 150);
+	modelViewMatrix.PushMatrix();
+	modelViewMatrix.Rotate(rotWh, 0, 0, 150);
+	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
+	DrawCylinder();
+	modelViewMatrix.PopMatrix();
+
+	modelViewMatrix.Translate(0, 0, 700);
+	modelViewMatrix.PushMatrix();
+	modelViewMatrix.Rotate(rotWh, 0, 0, 150);
+	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
+	DrawCylinder();
+	modelViewMatrix.PopMatrix();
+
+
+	//zweites Set Raeder
+	modelViewMatrix.Translate(160, 0, -700);
+	modelViewMatrix.PushMatrix();
+	modelViewMatrix.Rotate(rotWh, 0, 0, 150);
+	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
+	DrawCylinder();
+	modelViewMatrix.PopMatrix();
+
+
+	modelViewMatrix.Translate(0, 0, 700);
+	modelViewMatrix.PushMatrix();
+	modelViewMatrix.Rotate(rotWh, 0, 0, 150);
+	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
+	DrawCylinder();
+	modelViewMatrix.PopMatrix();
+
+	//drittes Set Raeder
+	modelViewMatrix.Translate(160, 0, -700);
+	modelViewMatrix.PushMatrix();
+	modelViewMatrix.Rotate(rotWh, 0, 0, 150);
+	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
+	DrawCylinder();
+	modelViewMatrix.PopMatrix();
+
+	modelViewMatrix.Translate(0, 0, 700);
+	modelViewMatrix.PushMatrix();
+	modelViewMatrix.Rotate(rotWh, 0, 0, 150);
+	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
+	DrawCylinder();
+	modelViewMatrix.PopMatrix();
+	modelViewMatrix.PopMatrix();
+
+
+}
+
+void DrawChimney() {
+	static float translateCh = 0.0f;
+	static bool directionChange = false;
+	if (!directionChange) {
+		translateCh += 0.0025f;
+		if (translateCh > 0.1)
+			directionChange = true;
+	}
+	else {
+		translateCh -= 0.0025f;
+		if (translateCh < 0.01)
+			directionChange = false;
+	}
+
+	//Achtung, wegen Rotate anschlieÃŸend y und z vertauscht D:
+	modelViewMatrix.Translate(30, 120, 50);
+	modelViewMatrix.Scale(0.3 + translateCh, 0.3 + translateCh, 0.3 + translateCh);
+	modelViewMatrix.PushMatrix();
+	modelViewMatrix.Rotate(90, 90, 0, 0);
+	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
+	DrawCylinder();
+	modelViewMatrix.PopMatrix();
+
+
+}
+
+void DrawSmoke() {
+	static float translateSmoke = 0.0f;
+	static bool directionChange = false;
+	if (!directionChange) {
+		translateSmoke += 1.0f;
+		if (translateSmoke > 100.0)
+			directionChange = true;
+	}
+	else {
+		translateSmoke -= 1.0f;
+		if (translateSmoke < 0.0)
+			directionChange = false;
+	}
+	
+
+	modelViewMatrix.Translate(150+ translateSmoke, 200, -230);
+	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
+	DrawSphere();
+	modelViewMatrix.Scale(1.2, 1.2, 1.2);
+	modelViewMatrix.Translate(100+ translateSmoke, 50, -100);
+	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
+	DrawSphere();
+	modelViewMatrix.Scale(1.2, 1.2, 1.2);
+	modelViewMatrix.Translate(100+ translateSmoke, 80, -100);
+	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
+	DrawSphere();
+
+}
+
+
 // Aufruf draw scene
 void RenderScene(void)
 {
+	glutTimerFunc(1000.0 / 5.0, timer, 0);
+}
+
+
+void timer(int)
+{
+	/* update animation */
+	//glutPostRedisplay();
+
 	// Clearbefehle fuer den color buffer und den depth buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -609,19 +718,16 @@ void RenderScene(void)
 	/*modelViewMatrix.Scale(0.5, 0.5, 0.5);
 	modelViewMatrix.Rotate(90, 0, 0, 0);
 	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
-
 	DrawCylinder();
-	//DrawSphere();	
-
+	//DrawSphere();
 	modelViewMatrix.Translate(-100, 0, 0);
 	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
 	//DrawSphere();
-	
+
 	modelViewMatrix.Translate(0, 0, -5);
 	modelViewMatrix.Scale(1, 0.5, 0.3);
 	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
 	DrawSquare();
-
 	//modelViewMatrix.LoadIdentity();
 	modelViewMatrix.Scale(0.5f, 0.5f, 0.5f);
 	modelViewMatrix.Translate(100, 250, -20);
@@ -630,90 +736,59 @@ void RenderScene(void)
 	modelViewMatrix.PushMatrix();
 	modelViewMatrix.PushMatrix();
 	DrawSquare();
-
 	modelViewMatrix.Scale(0.5f, 0.5f, 0.5f);
 	modelViewMatrix.Translate(350, 150, 0);
 	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
 	DrawSquare();*/
 
+
 	//erster Quader
 	modelViewMatrix.PushMatrix();
 	DrawSquare();
-
-	//erstes Set Raeder
-	modelViewMatrix.Scale(0.5, 0.5, 0.1);
-	modelViewMatrix.Translate(40, -50, 150);
-	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
-	modelViewMatrix.PushMatrix();
-	DrawCylinder();
-	modelViewMatrix.Translate(0, 0, 700);
-	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
-	DrawCylinder();
-
-	//zweites Set Raeder
-	modelViewMatrix.Translate(160, 0, -700);
-	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
-	DrawCylinder();
-	modelViewMatrix.Translate(0, 0, 700);
-	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
-	DrawCylinder();
-
-	//modelViewMatrix.PushMatrix();
-	//drittes Set Raeder
-	modelViewMatrix.Translate(160, 0, -700);
-	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
-	DrawCylinder();
-	modelViewMatrix.Translate(0, 0, 700);
-	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
-	DrawCylinder();
-	modelViewMatrix.PopMatrix();
 
 	//zweiter Quader
 	modelViewMatrix.Translate(100, 0, 0);
 	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
 	modelViewMatrix.PushMatrix();
-	DrawSquare(); 
+	DrawSquare();
 
+	//Fahrerhaeuschen
 	modelViewMatrix.Translate(0, 100, 0);
 	modelViewMatrix.Scale(1, 0.5, 1);
 	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
 	DrawSquare();
 	modelViewMatrix.PopMatrix();
+	modelViewMatrix.PopMatrix();
+
+
+	// Raeder
+	DrawWheels();
+
+	
+
+
 
 	//Schornstein
-	//Achtung, wegen Rotate anschließend y und z vertauscht D:
-	modelViewMatrix.Translate(-75, 120, 50);
-	modelViewMatrix.Rotate(90, 90, 0, 0);
-	modelViewMatrix.Scale(0.3, 0.3, 0.3);
-	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
-	DrawCylinder();
+	DrawChimney();
 
 	//Rauch
-	modelViewMatrix.Translate(150, 0, -230);
-	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
-	DrawSphere();
-	modelViewMatrix.Scale(1.2, 1.2, 1.2);
-	modelViewMatrix.Translate(100, 0, -100);
-	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
-	DrawSphere();
-	modelViewMatrix.Scale(1.2, 1.2, 1.2);
-	modelViewMatrix.Translate(100, 0, -100);
-	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
-	DrawSphere();
-
+	DrawSmoke();
 
 	modelViewMatrix.PopMatrix();
 
 	//Auf fehler ueberpruefen
 	gltCheckErrors(0);
 	// Hole die im Stack gespeicherten Transformationsmatrizen wieder zurueck
-	modelViewMatrix.PopMatrix();
+	//modelViewMatrix.PopMatrix();
 
 	TwDraw();
 	// Vertausche Front- und Backbuffer
 	glutSwapBuffers();
 	glutPostRedisplay();
+
+	glutTimerFunc(1000.0 / 5.0, timer, 0);
 }
+
 
 // Initialisierung des Rendering Kontextes
 void SetupRC()

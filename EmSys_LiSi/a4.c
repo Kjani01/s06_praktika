@@ -9,18 +9,71 @@
 
 	sem_t ourSem;
 
+void waste_msecstest() {
+
+	int i;
+	for (i = 0; i < 30000; i++) {
+		double calculate = i/13*(i-1);
+	}
+}
+
+//int main() {
+//	struct timespec before;
+//	struct timespec after;
+//
+//	int i;
+//	clock_gettime(CLOCK_REALTIME, &before);
+//	for (i = 0; i < 1000; i++) {
+//		waste_msecstest();
+//	 }
+//	clock_gettime(CLOCK_REALTIME, &after);
+////	if (after.tv_sec == before.tv_sec) {
+//	long long diff = (after.tv_nsec - before.tv_nsec)%1000000;
+//
+//	//printf("Time difference %lld\n", diff/1000);
+//
+////	}
+////	else {
+////		long long diff = after.tv_sec - before.tv_sec;	//2 Sekunden Unterschied
+////		long long nanodiff = after.tv_nsec - before.tv_nsec;
+////
+////		diff -= 1;
+////		nanodiff += 1000000;
+////
+////		printf("Time difference %lld.%lld\n", diff, nanodiff/1000);
+////
+////	}
+//	printf("Time difference %lld\n", diff);
+//
+//	printf("Startzeit %d, %d\n", before.tv_sec, before.tv_nsec);
+//	printf("Stopzeit %d, %d\n", after.tv_sec, before.tv_nsec);
+//
+//	return 0;
+//}
+
 void waste_msecs(unsigned int msecs) {
 
-	int iterations = msecs * 37750;
-	int i;
+	long iterations = msecs * 15300;
+	long i;
 
 	for (i = 0; i < iterations; i++) {
-		double calculate = i/13;
+		double calculate = i/13*(i-1);
+	}
+	//printf("Ende Waste Msecs, Iterations: %ld\n", iterations);
+}
+
+void waste_msecs2(unsigned int msecs) {
+
+	long iterations = msecs * 32300;
+	long i;
+
+	for (i = 0; i < iterations; i++) {
+		double calculate = i/13*(i-1);
 	}
 }
 
 void * threadSetSemaphore(void * vargp) {
-    printf("Hello from Task 1.\n");
+    //printf("Hello from Task 1.\n");
 
 	int ret = pthread_setschedprio(pthread_self(), 50);
 	if ( ret != 0 ){
@@ -37,22 +90,22 @@ void * threadSetSemaphore(void * vargp) {
 
 		int semv;
 		sem_getvalue(&ourSem, &semv);
-	    printf("> Task 1: sem_t @ %d\n", semv);
+	    //printf("> Task 1: sem_t @ %d\n", semv);
 
 		waste_msecs(2);
 		nap(2);
 
 		if (i == 3) {
-			ret = sem_post(&ourSem);
-			if ( ret != 0 ){
-							   printf ("sem_post: %s\n", strerror(ret));
-							   exit(-1);
-							}
-			printf("> Task 1: i'm now posting\n");
-			i = 0;
-		}
+							ret = sem_post(&ourSem);
+							if ( ret != 0 ){
+											   //printf ("sem_post: %s\n", strerror(ret));
+											   exit(-1);
+											}
+							//printf("> Task 1: i'm now posting\n");
+							i = 0;
+						}
 
-	    printf("Task 1 finished.\n");
+	    //printf("Task 1 finished.\n");
 
 	}
 
@@ -60,7 +113,7 @@ void * threadSetSemaphore(void * vargp) {
 }
 
 void * threadWaitForSemaphore(void * vargp) {
-	printf("Hello from Task 2.\n");
+	//printf("Hello from Task 2.\n");
 
 	int ret = pthread_setschedprio(pthread_self(), 100);
 		if ( ret != 0 ){
@@ -72,17 +125,18 @@ void * threadWaitForSemaphore(void * vargp) {
 	for (j = 0; j < 1000; j++) {
 		int semv;
 		sem_getvalue(&ourSem, &semv);
-	    printf("> Task 2: sem_t @ %d\n", semv);
+	    //printf("> Task 2: sem_t @ %d\n", semv);
 
-	    printf("> Task 2: waiting on my sem.\n");
+	    //printf("> Task 2: waiting on my sem.\n");
 		ret = sem_wait(&ourSem);
 		if ( ret != 0 ){
 				   printf ("sem_wait: %s\n", strerror(ret));
 				   exit(-1);
 				}
-		printf("> Task 2: sem has been posted, continuing.\n");
-		waste_msecs(3);
-	    printf("Task 2 finished.\n");
+		//printf("> Task 2: sem has been posted, continuing.\n");
+		//nap(2);
+		waste_msecs2(3);
+	    //printf("Task 2 finished.\n");
 	}
 
 	pthread_exit((void *)pthread_self());

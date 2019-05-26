@@ -1,0 +1,12 @@
+Feiler, Jesse. Exploring Swift Playgrounds - The Fastest and Most
+Effective Way to Learn to Code and to Teach Others to Use Your Code.
+Berkeley, CA. 2017.
+
+Kaczmarek, Stefan; Lees Brad; Bennett, Gary. Swift 4 for Absolute 
+Beginners - Develop Apps for iOS. Berkeley, CA. 2018.
+
+Downey, Eric. Practival Swift. Berkeley, CA. 2016.
+
+Feiler, Jesse. Learn Computer Science with Swift. Computation Concepts,
+Programming Paradigms, Data Management and Modern Component Architectures
+with Swift and Playgrounds. Berkeley, CA. 2018.

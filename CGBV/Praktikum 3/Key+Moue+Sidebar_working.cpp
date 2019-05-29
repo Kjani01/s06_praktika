@@ -51,6 +51,8 @@ GLBatch circleSlice2;
 GLBatch sphere;
 GLBatch apfel;
 
+static float dummy = 0.0f; // delete
+
 //Vektor für Augenpunkt
 M3DVector3f augenpunkt[1];
 bool rotateNick = false;
@@ -66,7 +68,8 @@ int stop = 0;
 
 M3DVector3f scaletrain[1] = { 1, 1, 1 };
 
-
+int gH = 0;
+int gW = 0;
 
 // Definition der Kreiszahl 
 #define GL_PI 3.1415f
@@ -849,6 +852,13 @@ void timer(int)
 	else
 		glPerspe();*/
 
+	/*int w;
+	int h;
+	glViewport(0, 0, w, h);
+	ChangeSize(w, h);*/
+
+
+
 
 	// Zeichne die Rueckseite von Polygonen als Drahtgitter falls das Flag gesetzt ist
 	if (bOutline)
@@ -860,7 +870,21 @@ void timer(int)
 	modelViewMatrix.PushMatrix();
 
 	modelViewMatrix.LoadIdentity();
-	modelViewMatrix.Scale(scsize, scsize, scsize);
+	//modelViewMatrix.Scale(scsize, scsize, scsize);
+
+	if (bPersp) {
+		//modelViewMatrix.PushMatrix();
+		ChangeSize(gW, gH);
+		modelViewMatrix.Translate(0.0, 0.0, -300.0);
+		//modelViewMatrix.Rotate(90.0, 0.0, 1.0, 0.0);
+		//modelViewMatrix.Rotate(180.0, 0.0, 1.0, 0.0);
+		//modelViewMatrix.Rotate(180.0, 0.0, 0.0, 1.0);
+		//modelViewMatrix.PopMatrix();
+	}
+	else {
+
+		ChangeSize(gW, gH);
+	}
 
 	M3DMatrix44f rot;
 	m3dQuatToRotationMatrix(rot, rotation);
@@ -876,7 +900,10 @@ void timer(int)
 	modelViewMatrix.Rotate(rotateX[0][0], rotateX[0][1], rotateX[0][2], rotateX[0][3]);
 	modelViewMatrix.Rotate(rotateY[0][0], rotateY[0][1], rotateY[0][2], rotateY[0][3]);
 
-	modelViewMatrix.Scale(scaletrain[0][0], scaletrain[0][1], scaletrain[0][2]);
+	//modelViewMatrix.Scale(scaletrain[0][0], scaletrain[0][1], scaletrain[0][2]);
+	
+	modelViewMatrix.Translate(0, 0, dummy);
+	
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -912,7 +939,7 @@ void timer(int)
 	glutSwapBuffers();
 	glutPostRedisplay();
 
-	glutTimerFunc(1000.0 / 60.0, timer, 0);
+	//glutTimerFunc(1000.0 / 60.0, timer, 0);
 }
 
 
@@ -971,6 +998,8 @@ void SpecialKeys(int key, int x, int y)
 
 void ChangeSize(int w, int h)
 {
+
+	gH = h; gW = w;
 	GLfloat nRange = 300.0f;
 
 	// Verhindere eine Division durch Null
@@ -988,7 +1017,7 @@ void ChangeSize(int w, int h)
 			viewFrustum.SetOrthographic(-nRange, nRange, -nRange * float(h) / float(w), nRange * float(h) / float(w), -nRange, nRange);
 		}
 		else {
-			viewFrustum.SetFrustum(-nRange, nRange, -nRange * float(h) / float(w), nRange * float(h) / float(w), -nRange, nRange);
+			viewFrustum.SetFrustum(-4 * nRange * float(w) / float(h), 4 * nRange * float(w) / float(h), -2 * nRange, 2 * nRange, 280, -10*nRange);
 		}
 	}
 	else {
@@ -997,7 +1026,7 @@ void ChangeSize(int w, int h)
 			viewFrustum.SetOrthographic(-nRange * float(w) / float(h), nRange * float(w) / float(h), -nRange, nRange, -nRange, nRange);
 		}
 		else {
-			viewFrustum.SetFrustum(-nRange * float(w) / float(h), nRange * float(w) / float(h), -nRange, nRange, -nRange, nRange);
+			viewFrustum.SetFrustum(-4*nRange * float(w) / float(h), 4*nRange * float(w) / float(h), -2*nRange, 2*nRange, 280, -10*nRange);
 		}
 
 	}
@@ -1175,11 +1204,11 @@ Mouse(int button, /* I - Button that changed */
 		}
 		else if (button == 3) { //zoom in 
 			printf("setze augenpunkt zoom in\n");
-			glutReshapeFunc(ChangeSize);
+			//glutReshapeFunc(ChangeSize);
 			scaletrain[0][0] = scaletrain[0][0] + 0.1;
 			scaletrain[0][1] = scaletrain[0][1] + 0.1;
 			scaletrain[0][2] = scaletrain[0][2] + 0.1;
-
+			dummy += 1.0f;
 			//augenpunkt[0][2] = augenpunkt[0][2] + 10;
 		}
 		else if (button == 4) { //zoom out
@@ -1188,7 +1217,7 @@ Mouse(int button, /* I - Button that changed */
 			scaletrain[0][1] = scaletrain[0][1] - 0.1;
 			scaletrain[0][2] = scaletrain[0][2] - 0.1;
 			//augenpunkt[0][2] = augenpunkt[0][2] - 10;
-
+			dummy -= 1.0f;
 		}
 	}
 	else {

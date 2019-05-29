@@ -26,6 +26,7 @@ void   Keyboard(unsigned char key, int x, int y);
 void   Motion(int x, int y);
 void   Mouse(int button, int state, int x, int y);
 void   Special(int key, int x, int y);
+void ChangeSize(int w, int h);
 
 
 
@@ -50,7 +51,7 @@ GLBatch circleSlice2;
 GLBatch sphere;
 GLBatch apfel;
 
-//Vektor für Augenpunkt
+//Vektor fÃ¼r Augenpunkt
 M3DVector3f augenpunkt[1];
 bool rotateNick = false;
 bool rotateGier = false;
@@ -384,7 +385,7 @@ void CreateGeometry()
 		m3dLoadVector3(sphericalVertices[i + 2], 0, 0, sphericalDepth);
 		m3dLoadVector3(sphericalVertices[i + 3], xSecond, ySecond, (sphericalDepth - currentheight));
 
-		m3dLoadVector3(apfelVertices[i], 0, 0, sphericalDepth); 
+		m3dLoadVector3(apfelVertices[i], 0, 0, sphericalDepth);
 		m3dLoadVector3(apfelVertices[i + 1], xFirst, yFirst, (sphericalDepth - currentheight));
 		m3dLoadVector3(apfelVertices[i + 2], 0, 0, sphericalDepth);
 		m3dLoadVector3(apfelVertices[i + 3], xSecond, ySecond, (sphericalDepth - currentheight));
@@ -635,7 +636,7 @@ void DrawWheels() {
 	modelViewMatrix.PopMatrix();
 	modelViewMatrix.PopMatrix();
 
-	
+
 	modelViewMatrix.PopMatrix();
 }
 
@@ -677,7 +678,7 @@ void DrawSmoke() {
 		if (translateSmoke < 0.0)
 			directionChange = false;
 	}
-	
+
 	modelViewMatrix.PushMatrix();
 	modelViewMatrix.Translate(100 + translateSmoke, 200, -230);
 	modelViewMatrix.Rotate(rotateSmoke, 0, rotateSmoke, 0);
@@ -741,7 +742,7 @@ void ScaledApple() {
 }
 
 void DrawTree() {
-	
+
 	modelViewMatrix.PushMatrix();
 	modelViewMatrix.Scale(0.3, 1, 0.3);
 	modelViewMatrix.Rotate(90, 90, 0, 0);
@@ -803,7 +804,7 @@ void DrawLandscape() {
 	shaderManager.UseStockShader(GLT_SHADER_FLAT_ATTRIBUTES, transformPipeline.GetModelViewProjectionMatrix());
 	modelViewMatrix.PushMatrix();
 	DrawTree();
-	modelViewMatrix.PopMatrix();	
+	modelViewMatrix.PopMatrix();
 
 
 
@@ -843,10 +844,11 @@ void timer(int)
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	if (bPersp)
+	/*if (bPersp)
 		glFrustum();
 	else
-		glPerspe();
+		glPerspe();*/
+
 
 	// Zeichne die Rueckseite von Polygonen als Drahtgitter falls das Flag gesetzt ist
 	if (bOutline)
@@ -898,7 +900,7 @@ void timer(int)
 
 	DrawLocomotive();
 	//DrawLandscape();
-	
+
 
 	//Auf fehler ueberpruefen
 	gltCheckErrors(0);
@@ -980,12 +982,25 @@ void ChangeSize(int w, int h)
 	projectionMatrix.LoadIdentity();
 
 	// Definiere das viewing volume (left, right, bottom, top, near, far)
-	if (w <= h)
+	if (w <= h) {
 		//viewFrustum.SetOrthographic(-nRange, nRange, -nRange * float(h) / float(w), nRange * float(h) / float(w), nRange, 5*nRange);
-		viewFrustum.SetOrthographic(-nRange, nRange, -nRange * float(h) / float(w), nRange * float(h) / float(w), -nRange, nRange);
-	else
+		if (!bPersp) {
+			viewFrustum.SetOrthographic(-nRange, nRange, -nRange * float(h) / float(w), nRange * float(h) / float(w), -nRange, nRange);
+		}
+		else {
+			viewFrustum.SetFrustum(-nRange, nRange, -nRange * float(h) / float(w), nRange * float(h) / float(w), -nRange, nRange);
+		}
+	}
+	else {
 		//viewFrustum.SetOrthographic(-nRange * float(w) / float(h), nRange * float(w) / float(h), -nRange, nRange, nRange, 5 * nRange);
-		viewFrustum.SetOrthographic(-nRange * float(w) / float(h), nRange * float(w) / float(h), -nRange, nRange, -nRange, nRange);
+		if (!bPersp) {
+			viewFrustum.SetOrthographic(-nRange * float(w) / float(h), nRange * float(w) / float(h), -nRange, nRange, -nRange, nRange);
+		}
+		else {
+			viewFrustum.SetFrustum(-nRange * float(w) / float(h), nRange * float(w) / float(h), -nRange, nRange, -nRange, nRange);
+		}
+
+	}
 	projectionMatrix.LoadMatrix(viewFrustum.GetProjectionMatrix());
 	// Ruecksetzung des Model view matrix stack
 	modelViewMatrix.LoadIdentity();
@@ -1104,9 +1119,9 @@ Motion(int x, /* I - Current mouse X position */
 			rotateX[0][2] = 1;
 			start = x;
 		}
-		else  {		//mehr rechts sehen R->L ziehen
+		else {		//mehr rechts sehen R->L ziehen
 			rotateX[0][0] = rotateX[0][0] - 5;
-			rotateX[0][2] =  1;
+			rotateX[0][2] = 1;
 			start = x;
 		}
 
@@ -1115,7 +1130,7 @@ Motion(int x, /* I - Current mouse X position */
 		if (y > start) {
 			rotateY[0][0] = rotateY[0][0] + 5;
 			rotateY[0][1] = 1;
-			start = y; 
+			start = y;
 		}
 		else {
 			rotateY[0][0] = rotateY[0][0] - 5;
@@ -1197,7 +1212,7 @@ void
 Special(int key, /* I - Key that was pressed */
 	int x,   /* I - X location of the mouse pointer */
 	int y)   /* I - Y location of the mouse pointer */
-{		
+{
 	int ViewAngle = 0;
 	switch (key)
 	{

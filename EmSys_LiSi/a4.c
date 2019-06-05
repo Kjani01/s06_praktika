@@ -109,7 +109,7 @@ void * threadWaitForSemaphore(void * vargp) {
 
 }
 
-int main2() {
+int main() {
 
 
 

@@ -83,18 +83,34 @@ void * threadSetSemaphore(void * vargp) {
 	for (j = 0; j < 1000; j++) {
 
 		i++;
+		struct timespec current;
+		struct timespec deadline;
+
 
 		//int semv;
 		//sem_getvalue(&ourSem, &semv);
 	    //printf("> Task 1: sem_t @ %d\n", semv);
 
-		waste_msecs(2);
 		//nap(2);
 		//sleeping();
 
-	    struct timespec deadline;
 	    //clock_gettime(CLOCK_REALTIME, &deadline);
-	    deadline.tv_nsec = 2000000;
+		
+		if (clock_gettime(CLOCK_REALTIME, &current) == -1) {
+			perror("clock_gettime error");
+			return (void*)EXIT_FAILURE;
+		}
+		if (clock_gettime(CLOCK_REALTIME, &endTime) == -1) {
+			perror("clock_gettime error");
+			return (void*)EXIT_FAILURE;
+		}
+	    
+		deadline.tv_nsec = 2000000;
+		//nsec2timespec(&endTime, timespec2nsec(&endTime) + 4000000);
+
+		
+		waste_msecs(2);
+
 
 	    int errorCode = clock_nanosleep(CLOCK_REALTIME, 0, &deadline, NULL);
 		if (errorCode != 0)

@@ -23,6 +23,7 @@ GLMatrixStack projectionMatrix;
 GLGeometryTransform transformPipeline;
 GLFrustum viewFrustum;
 GLBatch geometryBatch;
+GLBatch normVecs;
 GLuint shaders;
 GLBatch boden;
 GLBatch boden2;
@@ -54,7 +55,7 @@ void InitGUI()
 	TwDefine(" TweakBar size='200 400'");
 	TwAddVarRW(bar, "Model Rotation", TW_TYPE_QUAT4F, &rotation, "");
 	TwAddVarRW(bar, "Light Position", TW_TYPE_DIR3F, &light_pos, "group=Light axisx=-x axisy=-y axisz=-z");
-	//Hier weitere GUI Variablen anlegen. Für Farbe z.B. den Typ TW_TYPE_COLOR4F benutzen
+	//Hier weitere GUI Variablen anlegen. FÃ¼r Farbe z.B. den Typ TW_TYPE_COLOR4F benutzen
 	TwAddVarRW(bar, "NormVectors", TW_TYPE_BOOLCPP, &showNormVec, "");
 
 }
@@ -84,54 +85,88 @@ void CreateGeometry()
 	}
 
 	geometryBatch.Begin(GL_TRIANGLES, 48 * tesselierung);	//12 + 12 + 4*6=24 //*2 = 96
+	normVecs.Begin(GL_LINES, 48 * tesselierung * 4);
 
 	for (i = 1; i < (4 * tesselierung + 1); i++) {
 		geometryBatch.Normal3f(0, 0, 1);
-		geometryBatch.Vertex3f(bodenVertices[i-1][0], bodenVertices[i-1][1], bodenVertices[i-1][2]);
+		geometryBatch.Vertex3f(bodenVertices[i - 1][0], bodenVertices[i - 1][1], bodenVertices[i - 1][2]);
+
+		normVecs.Vertex3f(bodenVertices[i - 1][0], bodenVertices[i - 1][1], bodenVertices[i - 1][2]);
+		normVecs.Vertex3f(bodenVertices[i - 1][0] *2.0, bodenVertices[i - 1][1] *2.0, bodenVertices[i - 1][2]);
+
 		geometryBatch.Normal3f(0, 0, 1);
 		geometryBatch.Vertex3f(0.0, 0.0, 0.0);	//Startpunkt
 		if (i < (4 * tesselierung)) {
 			//printf("Writing only in 4 cases\n");
 			geometryBatch.Normal3f(0, 0, 1);
 			geometryBatch.Vertex3f(bodenVertices[i][0], bodenVertices[i][1], bodenVertices[i][2]);
+			normVecs.Vertex3f(bodenVertices[i][0], bodenVertices[i][1], bodenVertices[i][2]);
+			normVecs.Vertex3f(bodenVertices[i][0]*2.0, bodenVertices[i][1] * 2.0, bodenVertices[i][2]);
 		}
-		}
+	}
 	geometryBatch.Normal3f(0, 0, 1);
 	geometryBatch.Vertex3f(bodenVertices[0][0], bodenVertices[0][1], bodenVertices[0][2]);
+	normVecs.Vertex3f(bodenVertices[0][0], bodenVertices[0][1], bodenVertices[0][2]);
+	normVecs.Vertex3f(bodenVertices[0][0]*2.0, bodenVertices[0][1] * 2.0, bodenVertices[0][2]);
 
 	//Deckel
 	for (i = 1; i < (4 * tesselierung + 1); i++) {
 		geometryBatch.Normal3f(0, 0, 1);
 		geometryBatch.Vertex3f(boden2Vertices[i - 1][0], boden2Vertices[i - 1][1], boden2Vertices[i - 1][2]);
+
+		normVecs.Vertex3f(boden2Vertices[i - 1][0], boden2Vertices[i - 1][1], boden2Vertices[i - 1][2]);
+		normVecs.Vertex3f(boden2Vertices[i - 1][0] * 2.0, boden2Vertices[i - 1][1] * 2.0, boden2Vertices[i - 1][2]);
+
 		geometryBatch.Normal3f(0, 0, 1);
 		geometryBatch.Vertex3f(0.0, 0.0, 1.0);	//Startpunkt
 		if (i < (4 * tesselierung)) {
 			//printf("Writing only in 4 cases\n");
 			geometryBatch.Normal3f(0, 0, 1);
 			geometryBatch.Vertex3f(boden2Vertices[i][0], boden2Vertices[i][1], boden2Vertices[i][2]);
+			normVecs.Vertex3f(boden2Vertices[i][0], boden2Vertices[i][1], boden2Vertices[i][2]);
+			normVecs.Vertex3f(boden2Vertices[i][0] *2.0, boden2Vertices[i][1] * 2.0, boden2Vertices[i][2]);
 		}
 	}
 	geometryBatch.Normal3f(0, 0, 1);
 	geometryBatch.Vertex3f(boden2Vertices[0][0], boden2Vertices[0][1], boden2Vertices[0][2]);
+	normVecs.Vertex3f(boden2Vertices[0][0], boden2Vertices[0][1], boden2Vertices[0][2]);
+	normVecs.Vertex3f(boden2Vertices[0][0]*2.0, boden2Vertices[0][1] * 2.0, boden2Vertices[0][2]);
 
 	//Mantel
 	for (i = 1; i < (4 * tesselierung + 1); i++) {
 		geometryBatch.Normal3f(0, 0, 1);
 		geometryBatch.Vertex3f(bodenVertices[i % (4 * tesselierung)][0], bodenVertices[i % (4 * tesselierung)][1], bodenVertices[i % (4 * tesselierung)][2]);
+		normVecs.Vertex3f(bodenVertices[i % (4 * tesselierung)][0], bodenVertices[i % (4 * tesselierung)][1], bodenVertices[i % (4 * tesselierung)][2]);
+		normVecs.Vertex3f(bodenVertices[i % (4 * tesselierung)][0], bodenVertices[i % (4 * tesselierung)][1], bodenVertices[i % (4 * tesselierung)][2] -0.5);
+		
 		geometryBatch.Normal3f(0, 0, 1);
 		geometryBatch.Vertex3f(boden2Vertices[i % (4 * tesselierung)][0], boden2Vertices[i % (4 * tesselierung)][1], boden2Vertices[i % (4 * tesselierung)][2]);
+		normVecs.Vertex3f(boden2Vertices[i % (4 * tesselierung)][0], boden2Vertices[i % (4 * tesselierung)][1], boden2Vertices[i % (4 * tesselierung)][2]);
+		normVecs.Vertex3f(boden2Vertices[i % (4 * tesselierung)][0], boden2Vertices[i % (4 * tesselierung)][1], boden2Vertices[i % (4 * tesselierung)][2] + 0.5);
+		
 		geometryBatch.Normal3f(0, 0, 1);
 		geometryBatch.Vertex3f(bodenVertices[(i + 1) % (4 * tesselierung)][0], bodenVertices[(i + 1) % (4 * tesselierung)][1], bodenVertices[(i + 1) % (4 * tesselierung)][2]);
+		normVecs.Vertex3f(bodenVertices[(i + 1) % (4 * tesselierung)][0], bodenVertices[(i + 1) % (4 * tesselierung)][1], bodenVertices[(i + 1) % (4 * tesselierung)][2]);
+		normVecs.Vertex3f(bodenVertices[(i + 1) % (4 * tesselierung)][0], bodenVertices[(i + 1) % (4 * tesselierung)][1], bodenVertices[(i + 1) % (4 * tesselierung)][2] - 0.5);
 
 		geometryBatch.Normal3f(0, 0, 1);
 		geometryBatch.Vertex3f(boden2Vertices[i % (4 * tesselierung)][0], boden2Vertices[i % (4 * tesselierung)][1], boden2Vertices[i % (4 * tesselierung)][2]);
+		normVecs.Vertex3f(boden2Vertices[i % (4 * tesselierung)][0], boden2Vertices[i % (4 * tesselierung)][1], boden2Vertices[i % (4 * tesselierung)][2]);
+		normVecs.Vertex3f(boden2Vertices[i % (4 * tesselierung)][0], boden2Vertices[i % (4 * tesselierung)][1], boden2Vertices[i % (4 * tesselierung)][2] + 0.5);
+		
 		geometryBatch.Normal3f(0, 0, 1);
 		geometryBatch.Vertex3f(bodenVertices[(i + 1) % (4 * tesselierung)][0], bodenVertices[(i + 1) % (4 * tesselierung)][1], bodenVertices[(i + 1) % (4 * tesselierung)][2]);
+		normVecs.Vertex3f(bodenVertices[(i + 1) % (4 * tesselierung)][0], bodenVertices[(i + 1) % (4 * tesselierung)][1], bodenVertices[(i + 1) % (4 * tesselierung)][2]);
+		normVecs.Vertex3f(bodenVertices[(i + 1) % (4 * tesselierung)][0], bodenVertices[(i + 1) % (4 * tesselierung)][1], bodenVertices[(i + 1) % (4 * tesselierung)][2] - 0.5);
+		
 		geometryBatch.Normal3f(0, 0, 1);
 		geometryBatch.Vertex3f(boden2Vertices[(i + 1) % (4 * tesselierung)][0], boden2Vertices[(i + 1) % (4 * tesselierung)][1], boden2Vertices[(i + 1) % (4 * tesselierung)][2]);
+		normVecs.Vertex3f(boden2Vertices[(i + 1) % (4 * tesselierung)][0], boden2Vertices[(i + 1) % (4 * tesselierung)][1], boden2Vertices[(i + 1) % (4 * tesselierung)][2]);
+		normVecs.Vertex3f(boden2Vertices[(i + 1) % (4 * tesselierung)][0], boden2Vertices[(i + 1) % (4 * tesselierung)][1], boden2Vertices[(i + 1) % (4 * tesselierung)][2] + 0.5);
 	}
 
 	geometryBatch.End();
+	normVecs.End();
 
 	//Shader Programme laden. Die letzen Argumente geben die Shader-Attribute an. Hier wird Vertex und Normale gebraucht.
 	shaders = gltLoadShaderPairWithAttributes("VertexShader.glsl", "FragmentShader.glsl", 2,
@@ -144,40 +179,43 @@ void CreateGeometry()
 // Aufruf draw scene
 void RenderScene(void)
 {
-	// Clearbefehle für den color buffer und den depth buffer
+	// Clearbefehle fÃ¼r den color buffer und den depth buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glEnable(GL_DEPTH_TEST);
 	modelViewMatrix.LoadIdentity();
 	modelViewMatrix.Translate(0, 0, -5);
-	// Speichere den matrix state und führe die Rotation durch
+	// Speichere den matrix state und fÃ¼hre die Rotation durch
 	modelViewMatrix.PushMatrix();
 
 	M3DMatrix44f rot;
 	m3dQuatToRotationMatrix(rot, rotation);
 	modelViewMatrix.MultMatrix(rot);
 
-	//setze den Shader für das Rendern
+	//setze den Shader fÃ¼r das Rendern
 	glUseProgram(shaders);
-	// Matrizen an den Shader übergeben
+	// Matrizen an den Shader Ã¼bergeben
 	glUniformMatrix4fv(glGetUniformLocation(shaders, "mvpMatrix"), 1, GL_FALSE, transformPipeline.GetModelViewProjectionMatrix());
 	glUniformMatrix4fv(glGetUniformLocation(shaders, "mvMatrix"), 1, GL_FALSE, transformPipeline.GetModelViewMatrix());
 	glUniformMatrix3fv(glGetUniformLocation(shaders, "normalMatrix"), 1, GL_FALSE, transformPipeline.GetNormalMatrix(true));
-	// Lichteigenschaften übergeben
+	// Lichteigenschaften Ã¼bergeben
 	glUniform4fv(glGetUniformLocation(shaders, "light_pos_vs"), 1, light_pos);
 	glUniform4fv(glGetUniformLocation(shaders, "light_ambient"), 1, light_ambient);
 	glUniform4fv(glGetUniformLocation(shaders, "light_diffuse"), 1, light_diffuse);
 	glUniform4fv(glGetUniformLocation(shaders, "light_specular"), 1, light_specular);
 	glUniform1f(glGetUniformLocation(shaders, "spec_power"), specular_power);
-	//Materialeigenschaften übergeben
+	//Materialeigenschaften Ã¼bergeben
 	glUniform4fv(glGetUniformLocation(shaders, "mat_emissive"), 1, mat_emissive);
 	glUniform4fv(glGetUniformLocation(shaders, "mat_ambient"), 1, mat_ambient);
 	glUniform4fv(glGetUniformLocation(shaders, "mat_diffuse"), 1, mat_diffuse);
 	glUniform4fv(glGetUniformLocation(shaders, "mat_specular"), 1, mat_specular);
 	//Zeichne Model
 	geometryBatch.Draw();
+	
+	if (showNormVec)
+		normVecs.Draw();
 
-	// Hole die im Stack gespeicherten Transformationsmatrizen wieder zurück
+	// Hole die im Stack gespeicherten Transformationsmatrizen wieder zurÃ¼ck
 	modelViewMatrix.PopMatrix();
 	// Draw tweak bars
 	TwDraw();
@@ -194,7 +232,7 @@ void SetupRC()
 	glClearColor(0.12f, 0.35f, 0.674f, 0.0f);
 
 	// In Uhrzeigerrichtung zeigende Polygone sind die Vorderseiten.
-	// Dies ist umgekehrt als bei der Default-Einstellung weil wir Triangle_Fans benützen
+	// Dies ist umgekehrt als bei der Default-Einstellung weil wir Triangle_Fans benÃ¼tzen
 	glFrontFace(GL_CCW);
 
 	transformPipeline.SetMatrixStacks(modelViewMatrix, projectionMatrix);
@@ -205,10 +243,10 @@ void SetupRC()
 
 void ShutDownRC()
 {
-	//Aufräumen
+	//AufrÃ¤umen
 	glDeleteProgram(shaders);
 
-	//GUI aufräumen
+	//GUI aufrÃ¤umen
 	TwTerminate();
 }
 
